@@ -35,12 +35,17 @@ textarea {
 .topbar h1 {
   margin: 0;
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 400;
 }
 
-.topbar span {
-  color: #55636c;
-  font-size: 14px;
+.brand-title {
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.brand-accent {
+  color: #d71920;
+  font-weight: 800;
 }
 
 .section,
@@ -105,7 +110,6 @@ textarea {
 .dropzone {
   display: grid;
   place-items: center;
-  gap: 6px;
   min-height: 150px;
   margin-bottom: 16px;
   border: 2px dashed #98a8b3;
@@ -124,12 +128,17 @@ textarea {
 }
 
 .dropzone-title {
+  max-width: calc(100% - 32px);
+  overflow-wrap: anywhere;
+  text-align: center;
   font-weight: 700;
 }
 
-.dropzone-meta {
-  color: #6a7780;
-  font-size: 14px;
+.dropzone-plus {
+  color: #9aaab4;
+  font-size: 64px;
+  font-weight: 300;
+  line-height: 1;
 }
 
 .add-button {
@@ -170,6 +179,83 @@ textarea {
   background: #98a8b3;
 }
 
+.progress-panel {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid #d3e2df;
+  border-radius: 8px;
+  background: #f7fbfa;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: #26353a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.progress-header strong {
+  color: #136f63;
+  font-size: 13px;
+}
+
+.progress-track {
+  overflow: hidden;
+  height: 8px;
+  border-radius: 999px;
+  background: #dbe7e5;
+}
+
+.progress-bar {
+  position: relative;
+  height: 100%;
+  border-radius: inherit;
+  background: #136f63;
+  transition: width 240ms ease;
+}
+
+.progress-analyzing .progress-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  animation: progress-shimmer 1.35s infinite;
+}
+
+.progress-error {
+  border-color: #e2b7b7;
+  background: #fff7f7;
+}
+
+.progress-error .progress-header strong,
+.progress-error .progress-header {
+  color: #9d2d2d;
+}
+
+.progress-error .progress-bar {
+  background: #b94141;
+}
+
+.progress-panel p {
+  margin: 8px 0 0;
+  color: #64727a;
+  font-size: 13px;
+}
+
+@keyframes progress-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
 .secondary-button {
   height: 34px;
   padding: 0 12px;
@@ -192,7 +278,8 @@ textarea {
   margin: 14px 0;
 }
 
-.metrics div {
+.metric-card {
+  min-width: 0;
   padding: 10px;
   border-radius: 6px;
   background: #eef3f5;
@@ -204,13 +291,67 @@ textarea {
 }
 
 .metrics dd {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
   margin: 4px 0 0;
   font-weight: 700;
+}
+
+.metric-value {
+  color: #172026;
+  font-size: 18px;
+}
+
+.metric-unit {
+  color: #66747c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.metric-gradient {
+  position: relative;
+  height: 8px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #d94b4b 0%, #23a36b 50%, #d94b4b 100%);
+}
+
+.metric-marker {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #172026;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(23, 32, 38, 0.28);
+  transform: translate(-50%, -50%);
+}
+
+.metric-center-value {
+  margin-top: 6px;
+  color: #66747c;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.metric-card p {
+  margin: 7px 0 0;
+  color: #66747c;
+  font-size: 12px;
+}
+
+.metric-plain dd {
+  font-size: 18px;
 }
 
 .feedback {
   margin: 0;
   color: #33414a;
+  line-height: 1.7;
+  white-space: pre-wrap;
 }
 
 @media (max-width: 720px) {

@@ -4,13 +4,6 @@ const ACCEPTED_EXTENSIONS = [
   ".webm",
   ".mkv",
   ".avi",
-  ".m4a",
-  ".mp3",
-  ".wav",
-  ".aac",
-  ".flac",
-  ".ogg",
-  ".opus",
 ].join(",");
 
 type UploadDropzoneProps = {
@@ -41,12 +34,11 @@ export function UploadDropzone({ file, onFileChange }: UploadDropzoneProps) {
         accept={ACCEPTED_EXTENSIONS}
         onChange={(event) => handleFiles(event.target.files)}
       />
-      <span className="dropzone-title">
-        {file ? file.name : "영상 또는 음성 파일 선택"}
-      </span>
-      <span className="dropzone-meta">
-        드래그앤드롭 또는 클릭해서 파일을 선택하세요.
-      </span>
+      {file ? (
+        <span className="dropzone-title">{file.name}</span>
+      ) : (
+        <span className="dropzone-plus" aria-hidden="true">+</span>
+      )}
     </label>
   );
 }

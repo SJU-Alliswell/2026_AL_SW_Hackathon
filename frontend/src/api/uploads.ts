@@ -2,6 +2,13 @@ import { apiRequest } from "./client";
 
 const DEFAULT_PART_SIZE = 8 * 1024 * 1024;
 
+type UploadProgress = {
+  uploadedBytes: number;
+  totalBytes: number;
+  partNumber: number;
+  partCount: number;
+};
+
 type InitiateMultipartResponse = {
   bucket: string;
   object_key: string;
@@ -18,6 +25,7 @@ export async function uploadFileMultipart(params: {
   submissionId: string;
   blockId: string;
   file: File;
+  onProgress?: (progress: UploadProgress) => void;
 }): Promise<{ objectKey: string; uploadId: string }> {
   const initiate = await apiRequest<InitiateMultipartResponse>(
     "/uploads/multipart/initiate",
@@ -36,6 +44,7 @@ export async function uploadFileMultipart(params: {
 
   const partSize = initiate.part_size || DEFAULT_PART_SIZE;
   const uploadedParts = [];
+  let uploadedBytes = 0;
 
   for (const part of initiate.parts) {
     const start = (part.part_number - 1) * partSize;
@@ -50,9 +59,16 @@ export async function uploadFileMultipart(params: {
       throw new Error(`Part upload failed: ${part.part_number}`);
     }
 
+    uploadedBytes += chunk.size;
     uploadedParts.push({
       part_number: part.part_number,
       etag: uploadResponse.headers.get("etag") ?? "",
+    });
+    params.onProgress?.({
+      uploadedBytes,
+      totalBytes: params.file.size,
+      partNumber: part.part_number,
+      partCount: initiate.parts.length,
     });
   }
 

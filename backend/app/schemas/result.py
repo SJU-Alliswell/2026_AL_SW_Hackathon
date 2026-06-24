@@ -5,6 +5,7 @@ class AnalysisMetrics(BaseModel):
     speech_rate_eojeol_per_minute: float | None = None
     filler_word_count: int | None = None
     silence_count: int | None = None
+    silence_total_seconds: float | None = None
     gaze_off_count: int | None = None
 
 
