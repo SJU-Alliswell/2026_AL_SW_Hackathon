@@ -1,4 +1,53 @@
 services:
+  backend:
+    build:
+      context: ./backend
+    container_name: haca-backend
+    restart: unless-stopped
+    environment:
+      APP_ENV: local
+      DATABASE_URL: postgresql+psycopg://haca:haca@postgres:5432/haca
+      MINIO_ENDPOINT: minio:9000
+      MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT:-localhost:9100}
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET: haca-media
+      MINIO_SECURE: "false"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_FEEDBACK_MODEL: ${OPENAI_FEEDBACK_MODEL:-gpt-4.1-mini}
+      OPENAI_CLEANUP_MODEL: ${OPENAI_CLEANUP_MODEL:-gpt-4.1-mini}
+      OPENAI_STT_MODEL: ${OPENAI_STT_MODEL:-whisper-1}
+      STT_PROVIDER: ${STT_PROVIDER:-whisper}
+      STT_SAMPLE_TRANSCRIPT_PATH: /app/samples/sample_stt_transcript.txt
+      WORK_DIR: /app/tmp
+      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:5173"]}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: haca-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api/v1}
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+
   postgres:
     image: postgres:16-alpine
     container_name: haca-postgres
@@ -16,7 +65,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
   minio:
     image: minio/minio:latest
     container_name: haca-minio
@@ -25,10 +73,10 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
-      MINIO_API_CORS_ALLOW_ORIGIN: "http://localhost:5173"
+      MINIO_API_CORS_ALLOW_ORIGIN: ${MINIO_API_CORS_ALLOW_ORIGIN:-http://localhost:5173}
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "9100:9000"
+      - "9101:9001"
     volumes:
       - minio_data:/data
     healthcheck:
@@ -52,5 +100,6 @@ services:
     restart: "no"
 
 volumes:
+  frontend_node_modules:
   postgres_data:
   minio_data:

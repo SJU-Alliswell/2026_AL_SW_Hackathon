@@ -23,6 +23,7 @@ export type AnalyzeResult = {
     speech_rate_eojeol_per_minute: number | null;
     filler_word_count: number | null;
     silence_count: number | null;
+    silence_total_seconds: number | null;
     gaze_off_count: number | null;
   };
   original_text: string | null;
